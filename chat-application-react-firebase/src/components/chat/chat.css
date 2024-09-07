@@ -69,6 +69,7 @@
         display: flex;
         flex-direction: column;
         overflow: scroll;
+        overflow-x: hidden;
         gap: 10px;
 
         .message {
@@ -82,11 +83,13 @@
                 flex-direction: column;
 
 
-                img{
-                    height: 100px;
+                img {
+                    height: 100vh;
                     width: 100%;
+                    border-radius: 10px;
 
                 }
+
                 .texts {
                     p {
                         background: #5183fe;
@@ -185,5 +188,18 @@
 
 
     }
+
+}
+
+/* Webkit-based browsers (Chrome, Safari, etc.) */
+.chat .center::-webkit-scrollbar {
+    width: 4px;
+    /* Width of the scrollbar */
+}
+
+/* Track */
+.chat .center::-webkit-scrollbar-track {
+    background: rgba(17, 25, 40, 0.5);
+    ;
 
 }

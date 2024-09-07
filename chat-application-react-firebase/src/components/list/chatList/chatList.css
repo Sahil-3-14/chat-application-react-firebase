@@ -1,7 +1,7 @@
 .chatList {
     flex: 1;
     overflow: scroll;
-    /* overflow-x: hidden; */
+    overflow-x: hidden;
 
 
     .search {
@@ -78,4 +78,18 @@
             font-weight: 300;
         }
     }
+}
+
+
+
+/* Webkit-based browsers (Chrome, Safari, etc.) */
+.chatList::-webkit-scrollbar {
+    width: 4px;
+    /* Width of the scrollbar */
+}
+
+/* Track */
+.chatList::-webkit-scrollbar-track {
+    background: rgba(17, 25, 40, 0.5);;
+
 }
