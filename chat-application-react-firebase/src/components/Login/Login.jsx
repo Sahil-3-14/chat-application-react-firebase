@@ -2,35 +2,77 @@ import React from "react";
 import "./login.css";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import {
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { auth, db } from "../../lib/firebase";
+import { doc, setDoc } from "firebase/firestore"; // Firestore methods
+
+
 
 export default function Login() {
+  const [avatar, setAvatar] = useState({
+    file: null,
+    url: "",
+  });
+  const handleAvatar = (e) => {
+    if (e.target.files[0]) {
+      setAvatar({
+        file: e.target.files[0],
+        url: URL.createObjectURL(e.target.files[0]),
+      });
+    }
+  };
 
-    const [avatar, setAvatar] = useState({
-        file:null,
-        url:""
-    })
-    const handleAvatar = (e) => {
-        if(e.target.files[0]){
-            setAvatar({
-                file:e.target.files[0],
-                url: URL.createObjectURL(e.target.files[0])
-            });
+  const handleRegister = async (e) => {
+    e.preventDefault();
 
-        }
+    const formData = new FormData(e.target);
+
+    const {username, email, password} = Object.fromEntries(formData)
+    // const formObject = Object.fromEntries(formData.entries());
+
+    try {
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+
+      await setDoc(doc(db, "users", res.user.uid), {
+        username,
+        email,
+        id: res.user.uid,
+        blocked : []
+
+      });
+
+      await setDoc(doc(db, "userchats", res.user.uid), {
+        chats: [],
+      });
+
+      toast.success("Account created. You can login now")
+
+
+    } catch (error) {
+      console.log(error)
+      toast.error(error.message)
+      
     }
 
-    const handleLogin = (e) => {
-        e.preventDefault();
-        toast.warn("hello")
-    }
-    
+    // console.log(username)
+    // console.log(formObject);
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+  };
 
   return (
     <div className="login">
       <div className="item">
         <h2>Welcome back</h2>
-        <form onSubmit={handleLogin} >
-          <input type="text" placeholder="Email" name="Email" />
+        <form onSubmit={handleLogin}>
+          <input type="text" placeholder="Email" name="email" />
           <input type="password" placeholder="Password" name="password" />
           <button>Sign In</button>
         </form>
@@ -40,7 +82,7 @@ export default function Login() {
 
       <div className="item">
         <h2>Create an Account</h2>
-        <form action="">
+        <form onSubmit={handleRegister}>
           <label htmlFor="file">
             <img src={avatar.url || "avatar.png"} alt="" />
             upload an image
@@ -52,7 +94,7 @@ export default function Login() {
             onChange={handleAvatar}
           />
           <input type="text" placeholder="Username" name="username" />
-          <input type="text" placeholder="Email" name="Email" />
+          <input type="text" placeholder="Email" name="email" />
           <input type="password" placeholder="Password" name="password" />
           <button>Signup</button>
         </form>
